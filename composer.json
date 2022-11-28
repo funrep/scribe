@@ -1,7 +1,7 @@
 {
-  "name": "knuckleswtf/scribe",
+  "name": "funrep/scribe",
   "license": "MIT",
-  "description": "Generate API documentation for humans from your Laravel codebase.✍",
+  "description": "funrep's fork: Generate API documentation for humans from your Laravel codebase.✍",
   "keywords": [
     "API",
     "documentation",
