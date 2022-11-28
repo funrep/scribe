@@ -119,13 +119,15 @@ class OpenAPISpecWriter
                         'in' => 'path',
                         'name' => $name,
                         'description' => $details->description,
-                        'example' => $details->example,
                         // Currently, OAS requires path parameters to be required
                         'required' => true,
                         'schema' => [
                             'type' => $details->type,
                         ],
                     ];
+                    if ($details->example !== null) {
+                        $parameterData['example'] = $details->example;
+                    }
                     // Workaround for optional parameters
                     if (empty($details->required)) {
                         $parameterData['description'] = rtrim('Optional parameter. ' . $parameterData['description']);
@@ -136,7 +138,7 @@ class OpenAPISpecWriter
                             ],
                         ];
 
-                        if ($parameterData['example'] !== null) {
+                        if (array_key_exists('example', $parameterData)) {
                             $parameterData['examples']['present'] = [
                                 'summary' => 'When the value is present',
                                 'value' => $parameterData['example'],
