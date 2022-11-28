@@ -494,15 +494,22 @@ class OpenAPISpecWriter
             $fieldData = [
                 'type' => 'array',
                 'description' => $field->description ?: '',
-                'example' => $field->example,
-                'items' => Utils::isArrayType($baseType)
-                    ? $this->generateFieldData([
+            ];
+
+            if ($field->example !== null) {
+                $fieldData['example'] = $field->example;
+            }
+
+            if (Utils::isArrayType($baseType)) {
+                $fieldData['items'] = this->generateFieldData([
                         'name' => '',
                         'type' => $baseType,
                         'example' => ($field->example ?: [null])[0],
-                    ])
-                    : $baseItem,
-            ];
+                    ]);
+            } else {
+                $fieldData['items'] = $baseItem;
+            }
+
             if (str_replace('[]', "", $field->type) === 'file') {
                 // Don't include example for file params in OAS; it's hard to translate it correctly
                 unset($fieldData['example']);
@@ -522,20 +529,26 @@ class OpenAPISpecWriter
 
             return $fieldData;
         } else if ($field->type === 'object') {
-            return [
+            $fieldData = [
                 'type' => 'object',
                 'description' => $field->description ?: '',
-                'example' => $field->example,
                 'properties' => collect($field->__fields)->mapWithKeys(function ($subfield, $subfieldName) {
                     return [$subfieldName => $this->generateFieldData($subfield)];
                 })->all(),
             ];
+            if ($field->example !== null) {
+                $fieldData['example'] = $field->example;
+            }
+            return $fieldData;
         } else {
-            return [
+            $fieldData = [
                 'type' => static::normalizeTypeName($field->type),
                 'description' => $field->description ?: '',
-                'example' => $field->example,
             ];
+            if ($field->example !== null) {
+                $fieldData['example'] = $field->example;
+            }
+            return $fieldData;
         }
     }
 
